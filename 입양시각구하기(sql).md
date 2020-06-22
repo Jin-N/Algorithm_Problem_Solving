@@ -20,7 +20,7 @@ SQL 문제를 풀어보았다.
 
 
 
-### 정답(oracle을 사용)
+### 정답
 
 ```sql
 select HOUR, count(*)-1
