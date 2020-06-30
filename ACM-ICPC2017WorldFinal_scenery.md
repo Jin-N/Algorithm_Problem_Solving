@@ -1,18 +1,59 @@
+[문제링크](https://swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AV30Np8qABkBBAQU)
+
+#### 서론
+
+stains에 이은 두 번째 ACM-ICPC 도전이다.
+
+저번에 stains 문제를 풀고 대회 문제에 흥미가 생겨서, 이번에는 내가 찾아서 시도해본 것인데 며칠씩이나 쓰고도 실패...
+
+취업 준비를 하는 지금의 입장에서 이런 문제를 푸는 짓은 이번을 마지막으로 한동안 봉인해야 할 것 같다..
+
+__이번 문제는 매우 어렵다!__ 2017년 당시 final 문제였는데 참가한 팀 중 단 한 팀도 맞추지 못한 유일한 문제다.
+
+꽤 난해한 수학적 증명이 수반된 그리디 알고리즘을 사용하고 있어서, 해설을 이해하는 것만 해도 오래 걸렸다.
+
+(물론 해설이 엉망인 탓도 있다. 맨 밑에 공식 해설을 번역&부연설명과 함께 달아놓았다.)
 
 
-세 가지 경우로 나눠볼 수 있다.
 
-1. 1단계에서 필연적 `NO`에 도달하는 경우
+#### 문제 감상
+
+이 문제의 인상깊은 점은, 원래 그리디 알고리즘이 타당하지 않은 문제인데 적절한 전처리를 거쳐 그리디 알고리즘을 써도 되는 문제로 바꾼다는 점이다. 그리고 그러한 전처리를 거친 문제에서 그리디 알고리즘이 타당함을 증명하는 과정은 매우 수학적이다. 예전에 직접 그리디 알고리즘의 타당성을 직접 증명해본 적이 딱 1번 있다. 내가 공부한 알고리즘 책 나와 있는 프림 알고리즘과 크루스칼 알고리즘의 타당성 증명이 부실해서 빠진 퍼즐조각을 직접 증명해본 것이었는데, 이 문제의 증명은 그것보다 몇 배는 더 어려운 것 같다.... 컴퓨터과학자들이 알고리즘을 만든다는 것이 어떠한 느낌의 일인지 대략적으로 감을 잡아볼 수 있는 좋은 경험이었다.
+
+개괄적으로 말한다면, 이 "Yes or No" 문제는 전처리를 하는 1단계와 그리디 알고리즘을 적용하는 2단계로 나뉜다.
+
+문제는 반드시 다음의 3가지 경우 중 하나로 나뉜다.
+
+1. 1단계에서 필연적으로 `NO`에 도달하는 경우
 2. 1단계는 통과했는데 그리디 알고리즘이 실패하는 경우
 3. 1단계를 통과하고, 그리디 알고리즘도 성공한 경우
 
+1번의 경우 답은 당연히 `NO`다. 3의 경우에는 당연히 `YES`다. 
+
+해설은 여기서 __2번 케이스가 존재할 수 없음을 증명함으로써__, 1단계만 통과하면 나머지는 계산해보지 않아도 "YES"라고 말할 수 있음을 증명한다.
 
 
 
+#### 개선점
 
-공식 해설을 인용해 본다. 
+- 1만X1만의 배열을 만드니 런타임 에러가 났으나, 길이 1만의 1차 배열만을 만들고 수정해가며 쓰느 방식을 택했더니 이제 더 이상 메모리 초과는 뜨지 않았다.
 
-설명이 약간 부족하거나, 중의적이거나, 오류라고 생각되는 부분은 알아서 수정하며 직접 번역했다.
+- 그 외 시도가능한 카드는 몇가지 더 있으나, 정답을 생각하지 않고 그 부분의 연산을 모조리 생략해도 여지없이 실행시간 초과가 뜬다. 단 1개의 큰 테스트케이스도 해결하지 못한다!! 해설과 같은 시간복잡도로 구현했는데도..... 시도 가능한 카드는 다음과 같다.
+  - C가 들어갈 forbiddenArea를 이분탐색으로 찾는다.
+  - pile_C 배열의 각 열을 개방시간 순이 아니라, 마감시간 순으로 정렬한다. 그러면 "한 지점에서 -t를 적용하게 된다면 오른쪽의 모든 열 또한 마찬가지다"라는 원리를 모든 행에서 적용할 수 있게 된다.
+
+
+
+#### 훗날을 기약하며
+
+- 인터넷에 올라온 정답 코드는 죄다 C++라 이해할 수가 없다. 나중에 C++을 공부하고 읽어보면 내가 무엇을 빠뜨렸는지 깨닫겠지..
+- 아니면 나의 코드에는 아무 문제가 없는데 단지 python의 속도가 너무 느린 탓일 수도 있다!! 정보를 찾아보니 ACM-ICPC 심사위원들은 python을 허용하더라도, python으로 제한 시간 내에 풀 수 있는지 검증까지는 하지 않는다고 한다.. 뭐 이런;;;
+
+
+
+아래는 공식 해설이다.
+
+자세히 설명한다고 해놨지만, 내가 보기에는 애매모호하거나 중의적인 부분 투성이이며, 심지어 명백히 잘못된 문장도 있다!! 
 
 >Problem H: Scenery 
 >
@@ -85,7 +126,6 @@
 >The above, implemented naively, is pretty slow. First, notice that while as written we can have a quadratic number of forbidden regions, it is trivial to collapse all the forbidden regions ending at any s into one (the one corresponding to the smallest C). Also, note that when we move from s to the previous s 0 , we don’t have to run the time assignment from scratch – we can just take the previous C value, and if the photograph starting at s 0 ends before some e, we just have to add one more photograph before the C (by default, at C − t, but possibly earlier if C − t is in a forbidden region). This allows us to progress through this stage in O(n 2 ) time. 
 >
 >위의 방식을 우직하게 구현한다면 꽤나 느리다. 
->
 >먼저 이 사실에 주목해야 한다. 분명 금지구역의 갯수는 n^2에 비례하여 만들어지지만, 모든 s 각각에서, s를 오른쪽 끝점으로 같는 금지구역들은 쉽게 하나로 합쳐진다. (가장 작은 C를 가졌던 금지구역이 다 포함한다.) 또한 s에서 그 바로 앞의 s'으로 옮겨갈 때, 시간 할당을 처음부터 할 필요는 없다는 사실에 유의하라. 왜냐하면  s'가 허용시각인 사진이 시각 e나 e 이전에 마감되는 경우, s에서의 C를 취해 그 시각 왼쪽에 사진 1장의 촬영시간만 붙이면 되기 때문이다. (이렇게 C' = C - t가 되지만 만약 이렇게 만든 C'이 금지구역 안에 있다면 C'을 그 금지구역의 왼 끝점으로 재조정해야 한다.) 이러한 방식을 따르면 이 단계를 O(n^2)에 해결할 수 있다.
 
 
@@ -107,7 +147,7 @@
 >먼저 놀고있는 시간이 있다면(즉, 그리디 알고리즘에서 어떠한 사진도 찍히고 있지 않은 시간대) 그 시간은 반드시 금지구역에 속한다고 할 수 있는데, 이를 귀류법으로 증명하겠다. "놀고 있지만 금지구역이 아닌 어떤 시간대"를 X라고 부르자.  이는 그 시간대에는 남은 사진 중 찍을 수 있는 사진이 없음을 의미한다(그리디 알고리즘이므로 찍을 수 있는 사진이 있다면 찍고 있었을 것이다). 따라서 모든 사진은 X 이전에 배치가 완료되었거나, 허가시각이 X의 오른끝점 포함 이후인 사진으로 완전히 나뉘며, 전자는 후자에 전혀 영향을 미치지 않는다. 따라서 우리는 이 둘을 작은 문제 두 개로 분리할 수 있다. 따라서 그리디 알고리즘을 따랐을 때 어느 시간대에서 놀고 있다면, "금지구역이라서"라는 이유밖에는 없다.
 >이제 1단계를 마친 그리디 알고리즘이 왜 실패할 수 없는지 귀류법으로 증명하겠다. 
 
-부연설명: 여기서 "Assume the greedy algorithm did take a photograph incorrectly."라는 말은 이상하다.. 여기서 쓰이는 귀류법은 "1단계를 마친 후의 그리디 알고리즘이 실패할 수 없음"을 증명하지, "실패했는데 실제로는 가능한 경우는 없음"을 증명하는 것이 아니기 때문이다. 사실 포괄하는 말이기는 하지만...
+부연설명: 여기서 "Assume the greedy algorithm did take a photograph incorrectly."라는 말은 이상하다.. 여기서 쓰이는 귀류법은 결국 "1단계를 마친 후의 그리디 알고리즘이 실패할 수 없음"을 증명하기는 하지만, 어디서도 "실패했는데 실제로는 가능하다"를 가정하지 않기 때문이다.
 
 
 
@@ -116,9 +156,9 @@
 >실패했다고 가정하자. 실패를 만들어내는 처음 사진 P[i]를 생각해보자. 그 사진은 마감시각은 e[i]인데 촬영이 e[i]가 넘어서야 끝났다.  
 >
 >1. 만약 이전에 찍은 사진들 중 마감시각이 e[i] 이후인 사진이 없다면: P[i]까지의 사진들을 [s[0], e[i]]에 우겨넣을 수 없음을 의미하게 된다(그리디가 아닌 어떠한 방법으로도!). 따라서 첫 단계에서 [s[0], e[i]]의 C를 구하는 과정에서 이미 `NO`를 반환했을 것이다.
->2. 만약 마감시각이 e[i] 이후인 사진이 이전 사진들 중 존재한다면: 그들 중 마지막사진을 P[j]라고 하자. P[j]와 P[i]의 사이에 있는 모든 사진들을 순서대로 P[k1], P[k2], ●●●  P[kl]라고 하자.a2p3g8oah;wegih
+>2. 만약 마감시각이 e[i] 이후인 사진이 이전 사진들 중 존재한다면: 그들 중 마지막사진을 P[j]라고 하자. P[j]와 P[i]의 사이에 있는 모든 사진들을 순서대로 P[k1], P[k2], ●●●  P[kl]라고 하자. 뷁뷁뷁뷁뷁뷁뷁뷁뷁뷁!!!!
 
-부연설명: 2의 설명이 완전히 잘못된 데다가 모호하기까지 해서 이해하느라 엄청 고생했다. 우선 s를 구하는데 저 __P[j]를 포함시키면 안 된다!!(excluding P[j]).__ 일단 [s[j+1], e[i]]의 C - t는 반드시 P[j]의 촬영시작 시각보다 왼쪽에 있다. 이 때 s[j+1]이 P[j] 촬영 시작 시각(을 포함)보다 왼쪽에 있었다면, P[j]가 가장 먼저 찍힐 리가 없다. 또 s[j+1]이 P[j]보다 크지만 C보다 오른쪽은 아니라면, 금지구역에 P[j]이 들어가는 셈이 되어 또 모순이다. 가능한 경우는 s[j]이 P[j], C 둘 다보다 큰 경우 뿐이며, 이건 1단계에서 `NO`를 반환한다.
+부연설명: 2의 설명이 완전히 잘못된 데다가 모호하기까지 해서 이해하느라 엄청 고생했다. 우선 s를 구하는데 저 __P[j]를 포함시키면 안 된다!!(excluding P[j]).__ 일단 [s[j+1], e[i]]의 C - t는 반드시 P[j]의 촬영시작 시각보다 왼쪽에 있다. 이 때 s[j+1]이 P[j] 촬영 시작 시각(을 포함)보다 왼쪽에 있었다면, P[j]가 가장 먼저 찍힐 리가 없다. 또 s[j+1]이 P[j]보다 크지만 C보다 오른쪽은 아니라면, 금지구역에 P[j]이 들어가는 셈이 되어 또 모순이다. 가능한 경우는 s[j]이 P[j]와 C 둘 다보다 큰 경우 뿐이며, 이건 1단계에서 `NO`를 반환한다.
 
  
 
@@ -131,3 +171,62 @@
 >An alternative approach, which we will not prove, is an approach where we modify a naive branching approach. Naively, we can process forward through time, and maintain a set of possible states, where a possible state is the time when the photograph currently being taken (if any) ends, and the set of photographs that are available to take, but not yet started. This set of states is potentially exponential in size. We branch out (from all the states where there is no photograph being taken) when a new photograph becomes available, and we branch out when a photograph taking ends (to either not start a new photograph, or to start the one with the earliest deadline from those in the state). However, it is provable that we can actually have only one state where no photograph is being taken – when the algorithm ends up produces a new “nothing runs” state because some photograph just finished, one of the two states is strictly worse than the other. The proof, and the details of turning this into a quadratic algorithm, are left as an exercise to the reader.
 
 부연설명: 또 다른 풀이는 생략한다.
+
+
+
+
+
+### 시도한 코드
+
+```python
+def pull(n):
+    '''n이 forbidden안에 있으면 왼쪽으로 조정한다.'''
+    for i in range(-1, -len(forbiddenAreas_LP)-1, -1):
+        if n < forbiddenAreas_RP[i]: break
+    else:
+        return n
+    return min(n, forbiddenAreas_LP[i])
+ 
+INF = float('inf')
+ 
+for test in range(1, int(input()) + 1):
+    N, t = map(int, input().split())
+    pictures = [list(map(int, input().split())) for _ in range(N)]
+    pictures.sort(key=lambda x: x[0])
+ 
+    ''' 오른쪽에 몰아넣은 더미의 왼끝점 C들의 정보가 있어야 금지구역을 만들 수 있고,
+    금지구역이 있어야 더미를 차곡차곡 쌓을 수 있다. 즉 동시에 진행해야 된다. '''
+ 
+    # forbiddenArea의 구간들을 s기준으로 통합했다.
+    forbiddenAreas_LP = []
+    forbiddenAreas_RP = []
+    piles_C = [INF] * N  # e번째 요소는 [pictures[s][0], picures[e][[1]] 구간에서 사진들을 오른쪽으로 몰았을 때 왼 끝점. s통합을 편하게 하기 위해 INF 도입, s가 점점 작아진다.
+ 
+    for s in range(N - 1, -1, -1):  # 이전의 행을 이용하며 새로운 행을 채운다. 맨 마지막 행일 때에도 포괄 가능한 코드다.
+        for e in range(N):
+            if pictures[s][1] <= pictures[e][1]:         # 추가해야 되는 경우
+                if piles_C[e] == INF:                         # 이전까지 아무것도 못 쌓았을 때
+                    piles_C[e] = pull(pictures[e][1] - t)
+                else:
+                    piles_C[e] = pull(piles_C[e] - t)
+ 
+        leastC = min(piles_C)
+        # 꼭꼭 우겨넣었는데 개방시각보다 이르다면, NO를 반환하기 위해 break
+        if leastC < pictures[s][0]:
+            break
+        # forbiddenArea를 만들어야 할 때
+        if leastC - t < pictures[s][0]:
+            # 새로 추가해야 할 때:
+            if not forbiddenAreas_LP or pictures[s][0] <= forbiddenAreas_LP[-1]:
+                forbiddenAreas_LP.append(leastC - t)
+                forbiddenAreas_RP.append(pictures[s][0])
+            #기존과 겹치는 부분이 있다면
+            else:
+                forbiddenAreas_LP[-1] = leastC - t
+         
+    else:
+        print('#{} yes'.format(test))
+        continue
+    print('#{} no'.format(test))
+```
+
