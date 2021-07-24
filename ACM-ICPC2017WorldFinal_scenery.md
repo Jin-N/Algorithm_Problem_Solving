@@ -49,129 +49,10 @@ __이번 문제는 매우 어렵다!__ 2017년 당시 final 문제였는데 참�
 - 인터넷에 올라온 정답 코드는 죄다 C++라 이해할 수가 없다. 나중에 C++을 공부하고 읽어보면 내가 무엇을 빠뜨렸는지 깨닫겠지..
 - 아니면 나의 코드에는 아무 문제가 없는데 단지 python의 속도가 너무 느린 탓일 수도 있다!! 정보를 찾아보니 ACM-ICPC 심사위원들은 python을 허용하더라도, python으로 제한 시간 내에 풀 수 있는지 검증까지는 하지 않는다고 한다.. 뭐 이런;;;
 
-
-
-아래는 공식 해설이다.
-
-자세히 설명한다고 해놨지만, 내가 보기에는 애매모호하거나 중의적인 부분 투성이이며, 심지어 명백히 잘못된 문장도 있다!! 
-
->Problem H: Scenery 
->
->Shortest judge solution: 1753 bytes.
->
->Shortest team solution (during contest): N/A bytes. 
->
->Python solutions by the judges: none 
->
->문제 H: Scenery
->
->가장 짧은 심사위원 답안: 1753 bytes.
->
->가장 짧은 팀 답안(대회 중): 정답자 없음
->
->파이썬을 이용한 심사위원 답안: 없음
-
-
-
->OK, this is the difficult problem of the set... This problem really tempts you to try some sort of a greedy solution. Let us see how that would go. Let us process time from the beginning. At any point in time, when we decide to take a photograph, we should – out of all the photographs we can currently take – choose the one for which the end time is the smallest (by a standard interchange argument). 
->
->좋아요, 이건 이번 대회의 전체 문제 중에서도 어려운 문제입니다. . 이 문제에서 여러분은 일종의 그리디 알고리즘을 사용하려는 유혹을 강하게 받았을 것입니다. 어떻게 될지 한번 해봅시다. 맨 처음부터 시간을 진행시킵니다. 어떤 시점에서 사진을 찍기로 결정했다면, 우리는 항상 촬영 시작이 가능한 사진들 중 __마감 시각(유효범위의 오른쪽 끝점)이 제일 이른 사진__을 선택해야 합니다. (일반적인 교환 논의에 의해)
-
-
-
->The tricky part is to choose whether you should actually start taking a photograph. Consider an input with two photographs to take. The first one will be available in the range [0, 5], the second in the range [1, 3], and the time to take a single photograph is 2. Then, at time zero, we will fail if we start to take the first photograph. On the other hand, if the second range was [2, 4], we would fail if we didn’t start a photograph at zero. So, some sort of smarts are going to be needed. 
->
->까다로운 부분은, 그 시점에서 실제로 사진을 찍을 건지 결정하는 일 자체입니다. 입력값으로 사진이 두 장만 들어왔다고 가정해보겠습니다. 첫번째는 [0, 5], 두번째는 [1, 3]의 유효 범위를 가지며 한 장을 찍는 데 걸리는 시간은 2입니다. 이 때 시각 0에서 첫번째 사진을 찍기 시작한다면 실패할 것입니다. 반면에 만약 두번째 사진의 유효범위가 [2, 4]였다면, 이번에는 시각 0에서 __찍기 시작하지 않으면 실패__할 것입니다. 어떤 묘책이 필요할 것 같군요.
-
-
-
->We will describe two solutions. The first, which we will describe in some detail, comes from the paper “Scheduling Unit-time Tasks With Arbitrary Release Times and Deadlines” by Garey, Johnson, Simons, and Tarjan (SICOMP, 1981). In that paper it is shown that the problem can even be solved in O(n log n), but we felt that getting a quadratic time solution was hard enough, and that is what we describe here.
->
->두가지 해법을 설명할 것입니다. 첫 번째 방법은 꽤 자세하게 설명할 건데, Garey, Johnson, Simons, Tarjan의 논문 `Scheduling Unit-time Tasks With Arbitrary Release Times and Deadlines(SICOMP, 1981)`에 바탕을 두고 있습니다. 그 논문에서는 이 문제가 심지어 O(n*log n)의 시간복잡도로 해결 가능함을 보이고 있습니다만, 우리는 O(n^2)의 해법도 충분히 어렵다고 느꼈기 때문에 이 방식으로 설명하겠습니다.
-
-
-
->We are going to adapt the naive solution above. Notice that in order to make the photograph with the range [1, 3] be even feasible, regardless of all the other photographs, we cannot start any photograph in the open range (−1, 1) – if we do, it will overlap the range [1, 3], and we will not be able to fit [1, 3] in. We will try to generalize that observation. 
->
->우리는 앞서 설명한 "우직한 접근법"을 채택하고자 합니다. [1, 3]의 유효범위를 갖는 사진을 확실하게 찍을 수 있으려면, 다른 사진들이 어떻든지 상관없이 개구간 (-1, 1)에서는 어떠한 사진도 찍기 시작할 수 없다는 점에 주목하십시오. 만약 그 구간에서 찍기 시작한다면 구간 [1, 3]과 겹치는데, [1, 3]의 촬영은 조정할 수 없기 때문입니다. 이러한 관찰 결과를 일반화하겠습니다.
-
-
-
->Take any interval [s,e], and consider all the photographs which become available no earlier than s, and become unavailable no later than e. Then, all these photographs have to fit into the interval [s,e]. We will now totally disregard their constraints (except that they have to be taken somewhere in [s,e]), and try to take them as late as possible. Note that since we disregard their constraints, they are all identical and we can just schedule them greedily. Let us look at the time C when we started taking the first (earliest) of those photographs. However we schedule these photographs in the interval, the first start time will not be later than C. If C < s, then we will simply not be able to take all the photographs. The interesting case is if C − s < t. Then, if any photograph gets started in the open interval (C − t,s), we will be unable to take all the photos from the interval [s,e], since we will not be able to take the first of them at C or before. 
->
->임의의 구간 [s, e]를 잡고, 유효범위가 이 구간 안에 속해 있는(개방시각은 s보다 빠르지 않고,  마감시각은 e보다 늦지 않은) 모든 사진을 생각해 봅시다. 그리고 그 사진들의 유효범위 제약조건을 전부(촬영이 [s, e] 내에서 이루어져야만 한다는 사실만 제외) 무시하고, 사진을 가능한 한 늦게 찍습니다. 제약조건을 무시했므로 그들은 내부적으로 모두 동일하면서, 우리는 "탐욕적으로" 스케줄을 만들 수 있습니다. 그 중 처음의 사진을 찍기 시작하는 시각을 C라고 하면, 사진들을 어떻게 재배치하더라도 그때의 "처음사진 촬영 시작 시각"은 C보다 나중일 수 없습니다. 만일 C < s 라면, 모든 사진을 찍는 것은 단순하게 불가능합니다. 재밌는 경우는 C - s < t 일 때인데, 만약 외부의 어떤 사진 촬영을 (C - t, s)에서 시작한다면, 아까의 [s, e] 구간 내의 사진들을 모두 촬영하는 것은 불가능해집니다. 왜냐하면 시각 C나 그 이전에 첫사진 촬영을 시작하는 것이 불가능해지니까요.
-
-
-
->This means we can mark the interval (C − t,s) as “forbidden”, and no photograph can ever be started then. We can also take any forbidden intervals we found so far into account when doing the greedy scheduling from the back (which might help us create more forbidden intervals). 
->
->따라서 우리는 (C - t, s)를 "금지구역"이라고 표시할 수 있습니다. 어떠한 사진도 금지구역에서 촬영을 시작할 수 없습니다. 또한 뒤에서부터 그리디 알고리즘을 적용 할 때, 그때까지 발견한 모든 금지구역을 계산에 넣을 수 있습니다. (그리디한 배치를 뒤부터 적용하는 이유는, 금지구역을 최대한 많이 만들기 위해서입니다.)
-
-부연 설명: 여기서 "금지구역"이란 촬영을 __시작해서는 안 되는__ 구역임에 유의하자. 촬영시간의 뒷부분과 "금지구역"이 겹치는 것은 아무 문제가 되지 않는다.
-
-
-
-
->The full algorithm works as follows. We order all the availability times of all the photographs from latest to earliest. For each such time s, we iterate over all the end times e of the photographs, and for each interval [s,e] we run the algorithm above – take all the photographs that have to be taken fully within [s,e], ignore other constraints on them, assign times to them as late as possible (taking into account already created forbidden regions), and find the time C, which is the earliest possible start time of the first of those photographs. If C < s, return NO, and if C − s < t, produce a new forbidden region ending in s. 
->
->전체 알고리즘은 다음과 같은 흐름입니다. 모든 사진들의 유효범위를 허가시각(유효범위의 왼쪽 끝점) 역순으로 정렬합니다. 모든 허가시각 s에 대하여 모든 마감시각 e를 반복하여 돌며, 각각의 [s, e]에서 위의 알고리즘을 적용합니다. 즉,
->
->1. 유효범위가 [s, e]에 완전히 속하는 모든 사진들을 취한다.
->2. 제약 조건을 무시하고, 최대한 뒤로 사진들을 배치한다. 이 때 __기존에 생성된 금지구역을 고려한다.__
->3. C를 찾는다. C는 첫 사진을 촬영 시작할 수 있는 취후의 시각이다.
->4. C < s 면 `NO`를 return한다. C - s < t라면, 새로운 금지구역 (C- t, s)을 만들어낸다.
-
-부연설명: 여기서 `latest`니 `earlist`이니 하는 말들은 허가시간을 기준으로 한 비교다.
-
->The above, implemented naively, is pretty slow. First, notice that while as written we can have a quadratic number of forbidden regions, it is trivial to collapse all the forbidden regions ending at any s into one (the one corresponding to the smallest C). Also, note that when we move from s to the previous s 0 , we don’t have to run the time assignment from scratch – we can just take the previous C value, and if the photograph starting at s 0 ends before some e, we just have to add one more photograph before the C (by default, at C − t, but possibly earlier if C − t is in a forbidden region). This allows us to progress through this stage in O(n 2 ) time. 
->
->위의 방식을 우직하게 구현한다면 꽤나 느리다. 
->먼저 이 사실에 주목해야 한다. 분명 금지구역의 갯수는 n^2에 비례하여 만들어지지만, 모든 s 각각에서, s를 오른쪽 끝점으로 같는 금지구역들은 쉽게 하나로 합쳐진다. (가장 작은 C를 가졌던 금지구역이 다 포함한다.) 또한 s에서 그 바로 앞의 s'으로 옮겨갈 때, 시간 할당을 처음부터 할 필요는 없다는 사실에 유의하라. 왜냐하면  s'가 허용시각인 사진이 시각 e나 e 이전에 마감되는 경우, s에서의 C를 취해 그 시각 왼쪽에 사진 1장의 촬영시간만 붙이면 되기 때문이다. (이렇게 C' = C - t가 되지만 만약 이렇게 만든 C'이 금지구역 안에 있다면 C'을 그 금지구역의 왼 끝점으로 재조정해야 한다.) 이러한 방식을 따르면 이 단계를 O(n^2)에 해결할 수 있다.
-
-
-
->Then, after this is done, we just run the standard “greedy” algorithm, taking the forbidden regions into account. The tricky part, of course, is to prove that this actually solves the problem. Obviously, if the greedy algorithm succeeds in taking the photographs, the answer is YES. Now, we will prove that if the greedy algorithm ends up taking a photograph after its end time, then we would have actually failed in the first phase. 
->
->이 단계가 완료된다면, 이제 금지구역을 고려해가며 일반적인 그리디 알고리즘을 적용하는 일만 남았다. 물론 까다로운 부분은 이 알고리즘이 실제로 문제를 해결할 수 있는지 증명하는 일이다. 그리디 알고리즘으로 사진을 제 시간에 모두 찍을 수 있다면 답은 당연히 `YES`다. (그럼 그리디 알고리즘이 실패하면 답이 `NO`라고 할 수 있을까? ) 우리는 다음을 증명할 것이다. "1단계를 통과한 그리디 알고리즘이 실패하는 경우는 없다. 그리디 알고리즘이 실패한다면, 1단계도 통과하지 못할 것이므로 "
-
-부연설명: 여기서 "금지구역을 고려해가며 그리디 알고리즘을 적용"한다는 것은 다음의 의미다.
-
-1. 이전 사진의 촬영이 끝나는 대로 다음을 무조건 시작하되, 여러개가 있다면 마감시간이 제일 이른 사진을 시작한다. (그 시각에서 촬영 가능한 사진이 없는 경우는 없다. 이유는 뒤에 나온다.)
-2. 단 그 시각이 금지구역 내에 있다면, 그 금지구역의 오른 끝점으로 이동하여 촬영을 시작한다.
-
-
-
->
->Assume the greedy algorithm did take a photograph incorrectly. First, notice that if there are idle times (that is, times when no photograph is being taken by the greedy), we can assume they are all within forbidden regions. If there was an idle period without a forbidden region, let’s say at time X, it means that we have had no photograph available to take. So, all the photographs that were available before X got assigned and ended before X, and so they do not affect the photographs that become available after X. So, we can just remove these photographs from the set altogether and solve the smaller problem. 
->
->먼저 놀고있는 시간이 있다면(즉, 그리디 알고리즘에서 어떠한 사진도 찍히고 있지 않은 시간대) 그 시간은 반드시 금지구역에 속한다고 할 수 있는데, 이를 귀류법으로 증명하겠다. "놀고 있지만 금지구역이 아닌 어떤 시간대"를 X라고 부르자.  이는 그 시간대에는 남은 사진 중 찍을 수 있는 사진이 없음을 의미한다(그리디 알고리즘이므로 찍을 수 있는 사진이 있다면 찍고 있었을 것이다). 따라서 모든 사진은 X 이전에 배치가 완료되었거나, 허가시각이 X의 오른끝점 포함 이후인 사진으로 완전히 나뉘며, 전자는 후자에 전혀 영향을 미치지 않는다. 따라서 우리는 이 둘을 작은 문제 두 개로 분리할 수 있다. 따라서 그리디 알고리즘을 따랐을 때 어느 시간대에서 놀고 있다면, "금지구역이라서"라는 이유밖에는 없다.
->이제 1단계를 마친 그리디 알고리즘이 왜 실패할 수 없는지 귀류법으로 증명하겠다. 
-
-부연설명: 여기서 "Assume the greedy algorithm did take a photograph incorrectly."라는 말은 이상하다.. 여기서 쓰이는 귀류법은 결국 "1단계를 마친 후의 그리디 알고리즘이 실패할 수 없음"을 증명하기는 하지만, 어디서도 "실패했는데 실제로는 가능하다"를 가정하지 않기 때문이다.
-
-
-
->Now, assume the greedy algorithm failed. Take the first photograph Pi , with a deadline of ei , that got scheduled so it ends after ei . If no photograph that got scheduled earlier has a deadline later than ei , it means that the photographs up to Pi actually failed to fit into the range s0,ei – and so for that interval the first phase would’ve returned NO. If there is a photograph that has a deadline later than ei , let Pj be the latest of those photographs. Consider all the photographs Pk1 , . . . , Pkl that got scheduled between Pj and Pi , and let s be the earliest time at which any of those photographs (including Pj ) became available. Consider the first phase for the interval s,ei – it had to   have failed (because the greedy solution failed to put these photographs into this interval). 
->
->실패했다고 가정하자. 실패를 만들어내는 처음 사진 P[i]를 생각해보자. 그 사진은 마감시각은 e[i]인데 촬영이 e[i]가 넘어서야 끝났다.  
->
->1. 만약 이전에 찍은 사진들 중 마감시각이 e[i] 이후인 사진이 없다면: P[i]까지의 사진들을 [s[0], e[i]]에 우겨넣을 수 없음을 의미하게 된다(그리디가 아닌 어떠한 방법으로도!). 따라서 첫 단계에서 [s[0], e[i]]의 C를 구하는 과정에서 이미 `NO`를 반환했을 것이다.
->2. 만약 마감시각이 e[i] 이후인 사진이 이전 사진들 중 존재한다면: 그들 중 마지막사진을 P[j]라고 하자. P[j]와 P[i]의 사이에 있는 모든 사진들을 순서대로 P[k1], P[k2], ●●●  P[kl]라고 하자. (*&#*($&@#_%*(^*(_)@#%(&@$)
-
-부연설명: 2의 설명이 완전히 잘못된 데다가 모호하기까지 해서 이해하느라 엄청 고생했다. 우선 s를 구하는데 저 __P[j]를 포함시키면 안 된다!!(excluding P[j]).__ 일단 [s[j+1], e[i]]의 C - t는 반드시 P[j]의 촬영시작 시각보다 왼쪽에 있다. 이 때 s[j+1]이 P[j] 촬영 시작 시각(을 포함)보다 왼쪽에 있었다면, P[j]가 가장 먼저 찍힐 리가 없다. 또 s[j+1]이 P[j]보다 크지만 C보다 오른쪽은 아니라면, 금지구역에 P[j]이 들어가는 셈이 되어 또 모순이다. 가능한 경우는 s[j]이 P[j]와 C 둘 다보다 큰 경우 뿐이며, 이건 1단계에서 `NO`를 반환한다.
-
- 
-
->Thus, in all the cases where the greedy algorithm fails, the first phase had to have failed for some interval as well – so, if the first phase finished successfully, we are guaranteed the greedy algorithm will return a correct answer. 
->
->따라서, 그리디 알고리즘으로 배치에 실패하게 되는 모든 경우에, C와 금지구역을 만드는 첫번째 단계는 반드시 어떤 구간에서 이미 `NO`를 만들게 된다. (그러므로 모순이다. 그리디 알고리즘을 실행할 기회조차 주어지지 않으므로.)  따라서 첫번째 단계가 성공적으로 끝났다면, 그리디 알고리즘을 실행해보지 않아도, 성공할 것임이 저절로 보장된다.
-
-
-
->An alternative approach, which we will not prove, is an approach where we modify a naive branching approach. Naively, we can process forward through time, and maintain a set of possible states, where a possible state is the time when the photograph currently being taken (if any) ends, and the set of photographs that are available to take, but not yet started. This set of states is potentially exponential in size. We branch out (from all the states where there is no photograph being taken) when a new photograph becomes available, and we branch out when a photograph taking ends (to either not start a new photograph, or to start the one with the earliest deadline from those in the state). However, it is provable that we can actually have only one state where no photograph is being taken – when the algorithm ends up produces a new “nothing runs” state because some photograph just finished, one of the two states is strictly worse than the other. The proof, and the details of turning this into a quadratic algorithm, are left as an exercise to the reader.
-
-부연설명: 또 다른 풀이는 생략한다.
-
+#### 2021/07/24 마침내 풀었다.
+- 해설이 아닌 논문까지 찾아 읽어서 시간복잡도를 O(nlogn)으로 개선했다. 논문을 이해하는 것 자체에 시간이 많이 들었고, 구현 후 디버깅에도 시간을 한참 쏟았다. 특히 레드블랙트리의 구현이 복잡했다 
+- 무엇보다 swea 사이트 자체의 결함으로, import sys를 허용하지 않아서 재귀가 1000번 이상 호출되지 않도록 특이한 함수를 또 구현해야 했다.
+- 문제에 착수한지 1년이 더 지나서 풀었다. 정말 대장정이었다. 노력을 쏟아부은 만큼 뿌듯하다!!
 
 
 
@@ -179,52 +60,446 @@ __이번 문제는 매우 어렵다!__ 2017년 당시 final 문제였는데 참�
 ### 시도한 코드
 
 ```python
-def pull(n):
-    '''n이 forbidden안에 있으면 왼쪽으로 조정한다.'''
-    for i in range(-1, -len(forbiddenAreas_LP)-1, -1):
-        if n < forbiddenAreas_RP[i]: break
-    else:
-        return n
-    return min(n, forbiddenAreas_LP[i])
+class Node:
+    def __init__(self, key):
+        self.left = None
+        self.right = None
+        self.parent = None
+        self.key = key
  
-INF = float('inf')
+    def get_follower(self):  # 오른쪽 서브트리가 없을 때 실행하면 에러남.
+        cur = self.right
+        while cur.left:
+            cur = cur.left
+        return cur
  
+    def get_next(self):
+        if self.right: return self.get_follower()
+        cur = self
+        while cur.parent and cur == cur.parent.right:
+            cur = cur.parent
+        return cur.parent
+ 
+    def popfrom(self, tree):  # 루트노드 재설정 기능을 갖도록 하기 위해 tree를 매개변수로 받는다.
+        if self.right and self.left:  # 차수 2
+            follower = self.get_follower()
+            follower.popfrom(tree)
+            follower.left = self.left
+            follower.right = self.right
+            follower.left.parent = follower
+            if follower.right:
+                follower.right.parent = follower
+        elif self.right:  # 차수 1
+            follower = self.right
+        elif self.left:  # 차수 1
+            follower = self.left
+        else:  # 차수 0
+            follower = None
+        # 위쪽과의 관계. 모든 경우에 해당
+        if follower:  # 리프노드삭제가 아니었을 경우에만 추가실행
+            follower.parent = self.parent
+        if self == tree.root:  # cur가 루트노드였을 경우
+            tree.root = follower
+        else:  # cur가 루트노드가 아닐 경우
+            if self.parent.key < self.key:
+                self.parent.right = follower
+            else:
+                self.parent.left = follower
+ 
+    def left_rotate(self):
+        son = self.right
+        parent = self.parent
+        self.right = son.left  # 서브트리 떼주기
+        if son.left:
+            son.left.parent = self
+        son.left = self  # 상하관계 재설정
+        self.parent = son
+        son.parent = parent  # 부모와의 관계
+        if parent:
+            if parent.key < self.key:
+                parent.right = son
+            else:
+                parent.left = son
+ 
+    def right_rotate(self):
+        son = self.left
+        parent = self.parent
+        self.left = son.right  # 서브트리 떼주기
+        if son.right:
+            son.right.parent = self
+        son.right = self  # 상하관계 재설정
+        self.parent = son
+        son.parent = parent  # 부모와의 관계
+        if parent:
+            if parent.key < self.key:
+                parent.right = son
+            else:
+                parent.left = son
+ 
+    def insert_rebalance(self):  # 자신은 확정적으로 red, 부모가 red일지도 모르는 상황에서 실행
+        if not self.parent:  # 특이케이스. 루트노드일 경우 해당 노드의 색만 바꾸면 된다.
+            self.isred = False
+            return
+        if not self.parent.isred: return  # 특이케이스2. 부모가 black이면 그대로 종료하면 된다.
+        parent = self.parent
+        grandpa = parent.parent
+        if self.parent == grandpa.left:
+            uncle = grandpa.right
+        else:
+            uncle = grandpa.left
+        if uncle and uncle.isred:  # case1
+            self.parent.isred = False
+            uncle.isred = False
+            grandpa.isred = True
+            grandpa.insert_rebalance()
+        elif self == parent.right and parent == grandpa.left:  # case2-1-1, 왼-오 꺾임
+            parent.left_rotate()
+            parent.insert_rebalance()
+        elif self == parent.left and parent == grandpa.right:  # case2-1-2, 오-왼 꺾임
+            parent.right_rotate()
+            parent.insert_rebalance()
+        else:  # case2-2, 쭉 뻗은 경우
+            if self == parent.left:  # 좌로 뻗음
+                grandpa.right_rotate()
+            else:  # 우로 뻗음
+                grandpa.left_rotate()
+            grandpa.isred = True
+            parent.isred = False
+ 
+    def pop_rebalance(parent, x):
+        # 특이한 점으로 문제지점의 부모가 메소드의 주체다. 따라서 문제지점이 root라면 재귀적 실행이 불가능함.
+        # x의 형제는 None이 아님이 자명하다.
+        # 기본형
+ 
+        if x == parent.left:
+            brother = parent.right
+            if brother.isred:  # case 2-4
+                parent.left_rotate()
+                parent.isred, brother.isred = brother.isred, parent.isred
+                parent.pop_rebalance(x)
+                return
+            elif brother.right and brother.right.isred:  # case *-2
+                parent.left_rotate()
+                parent.isred, brother.isred = brother.isred, parent.isred
+                brother.right.isred = False
+                return
+            elif brother.left and brother.left.isred:  # case *-3
+                brother.right_rotate()
+                brother.isred = True
+                brother.parent.isred = False
+                parent.pop_rebalance(x)
+                return
+        # 대칭형
+        else:
+            brother = parent.left
+            if brother.isred:  # case 2-4
+                parent.right_rotate()
+                parent.isred, brother.isred = brother.isred, parent.isred
+                parent.pop_rebalance(x)
+                return
+            elif brother.left and brother.left.isred:  # case *-2
+                parent.right_rotate()
+                parent.isred, brother.isred = brother.isred, parent.isred
+                brother.left.isred = False
+                return
+            elif brother.right and brother.right.isred:  # case *-3
+                brother.left_rotate()
+                brother.isred = True
+                brother.parent.isred = False
+                parent.pop_rebalance(x)
+                return
+                # case 1-1과 case 2-1만 남았다. 통합해서 시행한다.
+        brother.isred = True
+        if parent.isred:  # case 1-1
+            parent.isred = False
+        else:  # case 2-1
+            if not parent.parent: return  # 루트노드라면 재귀실행이 필요없다.
+            parent.parent.pop_rebalance(parent)
+ 
+ 
+class BStree:
+    def __init__(self):
+        self.root = None
+ 
+    def find(self, key):  # 못 찾으면 None 반환
+        cur = self.root
+        while cur:
+            if cur.key < key:
+                cur = cur.right
+            elif key < cur.key:
+                cur = cur.left
+            else:
+                break
+        return cur
+ 
+    def insert(self, node):
+        cur = self.root
+        while cur:  # cur가 node의 부모가 되는 지점까지 타고 내려가야 함.
+            if cur.key < node.key:
+                if cur.right:
+                    cur = cur.right
+                else:
+                    cur.right = node
+                    node.parent = cur
+                    return
+            elif node.key < cur.key:
+                if cur.left:
+                    cur = cur.left
+                else:
+                    cur.left = node
+                    node.parent = cur
+                    return
+            else:
+                return
+        self.root = node  # 비어있는 트리였을 경우에만 위의 while문 대신 실행됨.
+        return
+ 
+    def pop(self, key):
+        cur = self.find(key)
+        if not cur:
+            return
+        cur.popfrom(self)
+        return cur
+ 
+    def find_smallest(self):
+        cur = self.root
+        if not cur: return
+        while cur.left:
+            cur = cur.left
+        return cur
+ 
+ 
+class RBtree(BStree):
+    def insert(self, node):
+        super().insert(node)
+        node.isred = True
+        node.insert_rebalance()  # 자신은 확정적으로 red, 부모가 red일지도 모르는 상황에서 리밸런스
+        cur = self.root  # 로테이션으로 인해 루트가 바뀌었을 가능성이 있으므로 실행해야 한다.
+        while cur.parent:
+            cur = cur.parent
+        self.root = cur
+ 
+    def pop(self, key):
+        cur = self.find(key)
+        if not cur: return
+        if cur.left and cur.right:
+            follower = cur.get_follower()
+            p_node = follower.right  # 문제가 될 노드를 마킹한다.
+            if follower == cur.right:  # p_node가 None일 가능성이 있으므로 부모노드도 필요하다. p_parent도 None일 수 있음.
+                p_parent = follower
+            else:
+                p_parent = follower.parent
+        else:
+            if cur.left:
+                follower = cur.left
+            else:
+                follower = cur.right
+            p_node = follower
+            p_parent = cur.parent
+ 
+        # 1. 후계자가 red이면 cur의 색깔로 바꿔주고 끝난다.
+        if follower and follower.isred:
+            follower.isred = cur.isred
+            cur.popfrom(self)
+            return cur
+        # 이하 후계자가 blk임
+        if not cur.left or not cur.right:
+            cur.popfrom(self)
+            if cur.isred:
+                return cur
+            else:  # 문제노드가 루트라면(부모가 없다면) 그냥 끝내고, 아니면 리밸런싱.
+                if not p_parent:
+                    return cur
+ 
+        else:  # 쌍이었던 경우, 문제노드와 후계자 다름
+            follower.isred = cur.isred
+            cur.popfrom(self)
+            if p_node and p_node.isred:  # 문제노드가 레드라면 색바꾸고 끝냄
+                p_node.isred = False
+                return cur
+            else:
+                pass
+                # 문제노드가 루트일 가능성은 없음. 리밸런싱
+ 
+        p_parent.pop_rebalance(p_node)
+        ascender = self.root
+        while ascender.parent:
+            ascender = ascender.parent
+        self.root = ascender
+        return cur
+ 
+####################### 여기서부터 본격적으로 시작 ##########################
+# 4.에서 pseudo_offset들의 파편을 연산하기 위한 함수들. 여기에서는 find_set이 필요 없다.
+def union_set(sup, inf):                
+    parents[inf] = sup
+    fragments[inf] -= fragments[sup]
+def compress(index):                    # 반환하는 건 fragments 경로합(boss 제외). 경로압축 기능 포함
+    if index == parents[index]: return 0
+    fragments[index] += compress(parents[index])
+    parents[index] = parents[parents[index]]
+    return fragments[index]
+def path_sum(index):                    # 경로압축 기능을 자연히 계승한다.
+    return compress(index) + fragments[parents[index]]      # 두 항은 절대 순서 바꾸면 안 된다. compress연산이 뒤에 영향미침
+def compress100(index, count):
+    if index == parents[index]: return 0
+    if count == 100: return fragments[index]
+    fragments[index] += compress100(parents[index], count+1)
+    parents[index] = parents[parents[index]]
+    return fragments[index]
+ 
+# 2.에서 유효한 대표 deadline을 찾기 위한 함수. 여기에서는 union_set이 필요 없다.
+def find_set(index):
+    if masters[index] != index:
+        masters[index] = find_set(masters[index])
+    return masters[index]
+ 
+def get_pseudoC(index):
+    load = 0
+    cur = Deadlines.root
+    while cur:
+        load += cur.segment
+        if deadlines[index] < cur.key:
+            cur = cur.left
+        elif cur.key < deadlines[index]:
+            cur = cur.right
+        else: break
+    while parents[index] != parents[parents[index]]:
+        compress100(index, 0)
+    return deadlines[index] - load*t - path_sum(index)
+# import sys
+# sys.setrecursionlimit(1000000)
 for test in range(1, int(input()) + 1):
     N, t = map(int, input().split())
-    pictures = [list(map(int, input().split())) for _ in range(N)]
-    pictures.sort(key=lambda x: x[0])
+    # 0. 준비작업. 정렬된 photos 배열, deadlines 배열(중복x), Deadlines 트리를 만든다. 
+    # photos와 deadlines는 같이 만들어나간다.
+    photos = []                                                                 
+    for _ in range(N):
+        photo = list(map(int, input().split()))
+        photos.append(photo)
+    photos.sort()
+    photos_by_deadline = [ [time[0], time[1], i] for i, time in enumerate(photos) ]     # 임시로 필요한 배열
+    photos_by_deadline.sort(key = lambda x: x[1])                                             # 각 photo의 세번째 요소는 개방시각 기준 순서를 나타낸다.
+    deadline = float('inf')                                                     
+    deadlines = []                                                              
+    for photo in photos_by_deadline:
+        if photo[1] != deadline:    
+            deadline = photo[1]
+            deadlines.append(deadline)
+        photos[photo[2]].append(len(deadlines)-1)                                               # 각 photo에 마감시각(중복X) 기준 순서를 세번째 요소로 추가한다.
+    del photos_by_deadline
+    # task가 적재되는 Deadlines 트리 만들기. 적재 정보를 왜곡하므로 초기화 이후 노드 추가or삭제 금지.        
+    Deadlines = RBtree()                
+    for deadline in deadlines:
+        node = Node(deadline)
+        node.segment = 0
+        Deadlines.insert(node)
+    # pseudo critical time의 위상이 key인 트리 만들기. 각 위상 노드는 해당되는 deadline들의 boss의 index를 속성으로 갖는다. 
+    fragments = [ 0 for _ in range(len(deadlines)) ]
+    parents = [ i for i in range(len(deadlines)) ]
+    PhaseC = RBtree()
+    valid = len(deadlines)              # 유사편차가 어느 deadline부터 활성화되어있는지 나타내기 위한 변수
  
-    ''' 오른쪽에 몰아넣은 더미의 왼끝점 C들의 정보가 있어야 금지구역을 만들 수 있고,
-    금지구역이 있어야 더미를 차곡차곡 쌓을 수 있다. 즉 동시에 진행해야 된다. '''
- 
-    # forbiddenArea의 구간들을 s기준으로 통합했다.
-    forbiddenAreas_LP = []
-    forbiddenAreas_RP = []
-    piles_C = [INF] * N  # e번째 요소는 [pictures[s][0], picures[e][[1]] 구간에서 사진들을 오른쪽으로 몰았을 때 왼 끝점. s통합을 편하게 하기 위해 INF 도입, s가 점점 작아진다.
- 
-    for s in range(N - 1, -1, -1):  # 이전의 행을 이용하며 새로운 행을 채운다. 맨 마지막 행일 때에도 포괄 가능한 코드다.
-        for e in range(N):
-            if pictures[s][1] <= pictures[e][1]:         # 추가해야 되는 경우
-                if piles_C[e] == INF:                         # 이전까지 아무것도 못 쌓았을 때
-                    piles_C[e] = pull(pictures[e][1] - t)
-                else:
-                    piles_C[e] = pull(piles_C[e] - t)
- 
-        leastC = min(piles_C)
-        # 꼭꼭 우겨넣었는데 개방시각보다 이르다면, NO를 반환하기 위해 break
-        if leastC < pictures[s][0]:
-            break
-        # forbiddenArea를 만들어야 할 때
-        if leastC - t < pictures[s][0]:
-            # 새로 추가해야 할 때:
-            if not forbiddenAreas_LP or pictures[s][0] <= forbiddenAreas_LP[-1]:
-                forbiddenAreas_LP.append(leastC - t)
-                forbiddenAreas_RP.append(pictures[s][0])
-            #기존과 겹치는 부분이 있다면
+    rivals = [ i - 1 for i in range(len(deadlines)) ]       # 2에서 pseudoC 비교를 위한 바로 다음 유효대조후보의 인덱스를 저장하는 배열
+    masters = [ i for i in range(len(deadlines)) ]          # 2에서 task의 deadline이 무효화된 것일 때, 대체시각을 찾기 위한 배열
+    prime = photos[N-1][2]                                 # leastC를 갖는 deadline 번호
+     
+    for r in range(N - 1, -1, -1):      # 개방시각 release 역순으로 탐색. r은 task의 index, 즉 photos[r][0] 는 해당 개방시각이다.
+        # 0. 유사편차가 활성화된 deadline 위치를 재조정한다.
+        while valid != 0:
+            if deadlines[valid-1] <= photos[r][0]: break
+            valid -= 1
+            phaseC = deadlines[valid]%t
+            node = PhaseC.find(phaseC)
+            if node:                                    # 이미 존재하는 위상이라면 합친다. 물론 신규는 경로합이 0이어야 한다.
+                union_set(node.boss, valid)
             else:
-                forbiddenAreas_LP[-1] = leastC - t
-         
-    else:
+                node = Node(phaseC)
+                node.boss = valid
+                PhaseC.insert(node)
+     
+        # 1. task를 Deadlines 트리에 적재한다.
+        deadline = photos[r][1]
+        cur = Deadlines.root
+        while True:
+            if cur.key < deadline:
+                cur = cur.right
+                continue
+            cur.segment += 1
+            if cur.left:                        # 왼쪽으로 가야되는 경우 + 해당 노드면서 리프노드가 아닌 경우
+                cur.left.segment -= 1
+                if cur.key != deadline:         #  왼쪽으로 가야 하는 경우
+                    cur = cur.left
+                    continue
+            break                                 # 해당 노드면서 리프인 경우 + 해당노드면서 리프 아닌 경우가 합류한다. 
+                 
+        # 2. Deadlines 트리와 fragments 집합을 이용하여 pseudoC 계산, 무효화된 deadline들을 건너뛰도록 인접번호를 재조정
+        challenger = find_set(photos[r][2])
+        prime = min(challenger, prime)                      # 미답의 deadline에 처음으로 적재된 경우 prime을 조정해야 한다.
+        pseudoC = get_pseudoC(challenger)
+        while rivals[challenger] >= 0:           # 가로막힐 때까지 라이벌들을 꺾는다.
+            if get_pseudoC(rivals[challenger]) < pseudoC: break
+            masters[rivals[challenger]] = challenger
+            rivals[challenger] = rivals[rivals[challenger]]
+        if masters[prime] != prime:                             # prime이 challenger에 먹힌 경우 조정해야 한다.
+            prime = challenger
+        # 3. prime을 이용하여 leastC를 구한다. photos[r][0]을 넘어서면 실패. 아니면 forbidden region 생성
+        leastC = get_pseudoC(prime)
+        if leastC < photos[r][0]: break                  # halt
+        if photos[r][0] + t <= leastC: continue       # 생성되는 금지구역 없음
+        leftP = leastC%t        
+        rightP = photos[r][0]%t
+        # 4. forbidden region에 따라 pseudo_offset을 갱신한다.
+        target = PhaseC.find(leftP)
+        if leftP < rightP:               # a보다 크고 b보다 작은 모든 phaseC들을 a에 맞추어 통폐합
+            if not target:                                  # 없을 경우 일단 새로 만들어본다.
+                target = Node(leftP)
+                PhaseC.insert(target)
+                candidate = target.get_next()
+                if candidate and candidate.key < rightP:     # 다음 녀석을 가로챈다.
+                    target.boss = candidate.boss
+                    fragments[candidate.boss] += candidate.key - leftP
+                    PhaseC.pop(candidate.key)
+                else:                                                       # 없어서 지우는 경우
+                    PhaseC.pop(target.key)
+                    continue
+            while True:                                     # 공통적으로 실행
+                candidate = target.get_next()
+                if not candidate: break           # 더 이상 위상 후보가 없으면 종료
+                if rightP <= candidate.key: break    # 끝점 범위를 벗어나면 종료
+                union_set(target.boss, candidate.boss)
+                fragments[candidate.boss] += candidate.key - leftP
+                PhaseC.pop(candidate.key)                
+        else:                             # a보다 크거나, b보다 작은 모든 phaseC들을 a에 맞추어 통폐합   
+            if not target:                              # 없는 경우 일단 새로 만들어본다.
+                target = Node(leftP)
+                PhaseC.insert(target)
+                candidate = target.get_next()
+                if not candidate:
+                    smallest = PhaseC.find_smallest()       # smallest는 절대 None이 아니다. target과 동일할 수는 있는데 어차피 다음에 걸러짐.
+                    if smallest.key < rightP:
+                        candidate = smallest
+                if candidate:
+                    target.boss = candidate.boss
+                    fragments[candidate.boss] += (candidate.key - leftP)%t
+                    PhaseC.pop(candidate.key)
+                else:
+                    PhaseC.pop(target.key)
+                    continue
+                                                     
+            while True:                                 # 공통적으로 실행 ( leftP가 키인 phaseC가 있던 경우 + 없던 경우)
+                candidate = target.get_next()
+                if not candidate: break                         # 더 이상 위상 후보가 없으면 종료
+                union_set(target.boss, candidate.boss)
+                fragments[candidate.boss] += candidate.key - leftP
+                PhaseC.pop(candidate.key)
+            while True:
+                candidate = PhaseC.find_smallest() 
+                if not candidate.key < rightP: break     # 끝점 범위를 벗어나면 종료
+                union_set(target.boss, candidate.boss)
+                fragments[candidate.boss] += (candidate.key - leftP)%t
+                PhaseC.pop(candidate.key)
+ 
+    else:                                   # 스케줄링 성공 시 실행
         print('#{} yes'.format(test))
         continue
     print('#{} no'.format(test))
