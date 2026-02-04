@@ -42,44 +42,43 @@ void init() {
 
 int main() {
     init();
+    int N, K, X;
+    cin >> N >> K >> X;
+    vector<ll> A(N);
+    rep(i, 0, N) cin >> A[i];
+    sort(all(A));
+    vector<ll> diff(N-1);
+    rep(i, 0,N-1) diff[i] = A[i] - A.back();
 
-    int N, Q;
-    cin >> N >> Q;
-    set<ll> forbidden;
-    rep(i, 0, N){
-        int x; cin >> x;
-        forbidden.insert(x);
-    }
-    vector<ll> A(all(forbidden));   // 중복되는 forbidden은 무의미함.
-    vector<pll> increment; // {a, b}가 들어있다면, 1부터 forbidden제외 누적갯수가 b개인 수 중에서 최소가 a다.
-    if(A[0] != 1) increment.push_back({1, 1});
-    rep(i, 0, A.size())
-        if(i == A.size()-1 || A[i]+1 != A[i+1]) 
-            increment.push_back({A[i]+1, A[i]-i});
-                 
-    while(Q--){
-        // f(m) = k 일 때, 1부터 m까지의 수 중 forbidden을 제외한 갯수가 k다.
-        // f(x) = t 이고, x가 forbidden에 속한다면, f(ans) = t+y 이고, ans는 이 조건을 만족하는 수 중 최소다. 
-        // f(x) = t 이고, x가 forbidden에 속하지 않는다면, f(ans) = t+y-1 이고, ans는 이 조건을 만족하는 수 중 최소다. 
+    //최소힙 pq와 unordered_set visited 를 만든다.
+    //pq에는 {지금까지의 차분의 총합, (길이 N-1짜리 갯수 정보)}이 들어간다.
+    //visited에는 (길이 N-1짜리 갯수 정보)가 들어간다.
+    //초기에 pq에 {A[0], (1, 0, 0.....)} ~ {A[N-2], (0, 0, ....1)}를 넣는다.
+    //visited에도 넣는다.
+    //이후 한개씩 꺼내면서 N-1개의 자식들(각 과자를 1개씩 더한 것)을 visited에 없는지 검사하고 pq에 넣는다.
+    //A.back()*X - 꺼낸 것의 first 를 출력한다. 
 
-        int X, Y;
-        cin >> X >> Y;
-        int idx = upper_bound(all(increment), pll(X, LINF)) - increment.begin() - 1;
-        ll t, target;
-        if(forbidden.count(X)){
-            t = increment[idx+1].second - 1;
-            target = t + Y;
+    priority_queue<pair<ll, vector<ll>>> pq;
+    pq.push({0, vector<ll>(N-1, 0)});
+    set<vector<ll>> visited;
+    visited.insert(vector<ll>(N-1, 0));
+
+    vector<ll> ans;
+    rep(_, 0, X){
+        auto [sumDiff, cnt] = pq.top(); pq.pop();
+        ans.push_back(A[N-1]*K + sumDiff);
+
+        if(accumulate(all(cnt), 0) == K) continue;
+        rep(i, 0, N-1){
+            vector<ll> nxt = cnt;
+            nxt[i]++;
+            if(!visited.count(nxt)){
+                visited.insert(nxt);
+                pq.push({sumDiff+diff[i], nxt});
+            }
         }
-        else{
-            t = increment[idx].second + X - increment[idx].first;
-            target = t + Y - 1;
-        }
-        int j = upper_bound(all(increment), target, [](const ll& val, const pll& p){
-            return val < p.second;
-            }) - increment.begin() - 1;
-        int ans = increment[j].first + (target - increment[j].second);
-
-        cout << ans << '\n';
     }
+
+    for(auto val : ans) cout << val << '\n';
     return 0;
 }
