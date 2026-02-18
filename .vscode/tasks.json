@@ -1,0 +1,27 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build and run test",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "-std=c++17",
+                "test.cpp",
+                "-o",
+                "test.exe"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$gcc"],
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "env": {
+                    "PATH": "/c/msys64/mingw64/bin:${env:PATH}"
+                }
+            }
+        }
+    ]
+}

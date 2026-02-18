@@ -13,9 +13,10 @@ namespace atcoder {
 
 template <class Cap> struct mf_graph {
   public:
+    // 생성 시 정점의 갯수 N을 지정해야 한다.
     mf_graph() : _n(0) {}
     explicit mf_graph(int n) : _n(n), g(n) {}
-
+    // 정점 from에서 정점 to로 용량 cap 만큼의 간선 추가. 역간선 자동 관리
     int add_edge(int from, int to, Cap cap) {
         assert(0 <= from && from < _n);
         assert(0 <= to && to < _n);
@@ -59,7 +60,7 @@ template <class Cap> struct mf_graph {
         _e.cap = new_cap - new_flow;
         _re.cap = new_flow;
     }
-
+    // 핵심 함수. Dinic 알고리즘(항상 레벨이 증가하는 방향으로만 DFS 탐색) 사용
     Cap flow(int s, int t) {
         return flow(s, t, std::numeric_limits<Cap>::max());
     }

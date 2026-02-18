@@ -2,14 +2,11 @@
 template<class T>
 struct vector2d{
     T x, y;
-
     vector2d() : x(0), y(0) {}
     vector2d(T _x, T _y) : x(_x), y(_y) {}
-
     bool operator == (const vector2d& rhs) const {
         return x == rhs.x && y == rhs.y;
     }
-
     auto cross(const vector2d& rhs) const {
         return x * rhs.y - rhs.x * y;
     }
